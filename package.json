@@ -1,0 +1,18 @@
+{
+  "name": "daily-keep-cloud",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Daily Keep - גרסת ענן אישית: רצה כל בוקר בחשבון הגיטהאב של המשתמש ושולחת לו מייל",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/main.ts",
+    "preview": "tsx src/main.ts --preview"
+  },
+  "dependencies": {
+    "gifenc": "1.0.3",
+    "israeli-bank-scrapers": "6.12.2",
+    "moment": "2.30.1",
+    "pngjs": "7.0.0",
+    "tsx": "4.19.2"
+  }
+}
