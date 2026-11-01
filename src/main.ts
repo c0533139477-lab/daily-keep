@@ -54,6 +54,26 @@ function accountsFromEnv() {
   return list;
 }
 
+// חברות שחוסמות כניסה משרתים בחו"ל, ולכן עוברות דרך כתובת ישראלית (אם הוגדרה PROXY_URL)
+const NEEDS_ISRAELI_ADDRESS = new Set<CompanyTypes>([CompanyTypes.isracard, CompanyTypes.amex]);
+
+/** PROXY_URL בצורה http://user:pass@host:port */
+function proxyFromEnv() {
+  const raw = env('PROXY_URL');
+  if (!raw) return null;
+  try {
+    const u = new URL(raw.includes('://') ? raw : `http://${raw}`);
+    return {
+      server: `${u.protocol}//${u.hostname}:${u.port || '3128'}`,
+      username: decodeURIComponent(u.username),
+      password: decodeURIComponent(u.password),
+    };
+  } catch {
+    console.log('הכתובת ב-PROXY_URL לא תקינה, ממשיכים בלעדיה');
+    return null;
+  }
+}
+
 async function scrapeAll(daysBack: number) {
   const accounts = accountsFromEnv();
   if (!accounts.length) throw new Error('לא הוגדרו פרטי כניסה לאף כרטיס. ראו את ההוראות בקובץ README');
@@ -61,14 +81,20 @@ async function scrapeAll(daysBack: number) {
   const all: EnrichedTransaction[] = [];
   const failures: string[] = [];
   for (const { company, credentials } of accounts) {
-    console.log(`מושך עסקאות מ-${company}...`);
+    const proxy = NEEDS_ISRAELI_ADDRESS.has(company) ? proxyFromEnv() : null;
+    console.log(`מושך עסקאות מ-${company}${proxy ? ' (דרך כתובת ישראלית)' : ''}...`);
     const scraper = createScraper({
       companyId: company,
       startDate,
       combineInstallments: false,
       showBrowser: false,
       executablePath: process.env.CHROME_PATH || undefined,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      args: ['--no-sandbox', '--disable-setuid-sandbox', ...(proxy ? [`--proxy-server=${proxy.server}`] : [])],
+      preparePage: proxy?.username
+        ? async (page) => {
+            await page.authenticate({ username: proxy.username, password: proxy.password });
+          }
+        : undefined,
       timeout: 120000,
     });
     try {
@@ -101,6 +127,7 @@ async function buildEmail(history: EnrichedTransaction[], settings: Settings) {
     fixedCharges: settings.fixedCharges ?? [],
     monthPeriod: settings.monthPeriod,
     footerCredit: FOOTER_CREDIT,
+    updateNote: 'הנתונים מתעדכנים בכל בוקר.',
   };
   const summary = buildDailySummary(history, s);
   const { subject, html, images, animations, staticImages } = renderDailySummaryEmail(summary, s);
@@ -158,6 +185,12 @@ async function send(mime: string) {
 }
 
 async function main() {
+  // בהרצה האוטומטית, כשכמה משתמשים עוברים דרך אותה כתובת ישראלית, מפזרים את שעת ההתחלה כדי שלא ייכנסו כולם יחד
+  if (process.env.GITHUB_EVENT_NAME === 'schedule' && env('PROXY_URL')) {
+    const ms = Math.floor(Math.random() * 8 * 60 * 1000);
+    console.log(`ממתין ${Math.round(ms / 60000)} דקות לפני ההתחלה`);
+    await new Promise((r) => setTimeout(r, ms));
+  }
   const settings = JSON.parse(readFileSync('settings.json', 'utf8')) as Settings;
   let history: EnrichedTransaction[];
   let failures: string[] = [];

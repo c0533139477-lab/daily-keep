@@ -14,6 +14,8 @@ export interface DailySummarySettings {
   cardNames: Record<string, string>;
   /** שורת קרדיט בתחתית המייל */
   footerCredit?: string;
+  /** משפט על עדכון הנתונים בתחתית המייל (בענן אין "מחשב דולק") */
+  updateNote?: string;
   /** הוראות קבע שהמשתמש הוסיף ידנית */
   fixedCharges?: FixedCharge[];
   /** ממתי עד מתי נחשב החודש (לועזי/עברי, יום התחלה) */
@@ -488,7 +490,7 @@ export function renderDailySummaryEmail(s: DailySummary, settings: DailySummaryS
   const footer =
     `<tr><td style="padding:4px 0 0;"><img src="cid:wave" width="600" alt="" style="display:block;width:100%;max-width:600px;height:auto;"></td></tr>` +
     `<tr><td style="padding:4px 10px 6px;text-align:center;font-size:12px;color:${SOFT};background:#F3E6D3;border-radius:0 0 24px 24px;">` +
-    `העסקה האחרונה שנמשכה: ${dayLabel(s.lastTransactionKey)}. הנתונים מתעדכנים כשהמחשב דולק.` +
+    `העסקה האחרונה שנמשכה: ${dayLabel(s.lastTransactionKey)}. ${settings.updateNote ?? 'הנתונים מתעדכנים כשהמחשב דולק.'}` +
     (settings.footerCredit ? `<br><span style="color:${C.brown};font-weight:bold;">${esc(settings.footerCredit)}</span>` : '') +
     `</td></tr>`;
 

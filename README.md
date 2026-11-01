@@ -27,6 +27,8 @@
 יש כרטיסים של שני אנשים באותה חברה? לאדם השני מוסיפים 2 אחרי שם החברה.
 למשל: ISRACARD2_ID, ISRACARD2_CARD6, ISRACARD2_PASSWORD
 
+ישראכרט ואמריקן אקספרס חוסמות כניסה משרתים בחו"ל. כדי שיעבדו צריך גם את ההגדרה PROXY_URL (כתובת ישראלית), שאותה מקבלים ממי שנתן לכם את הכלי.
+
 ## שליחת המייל
 
 - מה-Gmail שלך: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN
