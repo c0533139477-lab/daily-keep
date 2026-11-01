@@ -20,27 +20,5 @@ jobs:
       - run: npm start
         env:
           TZ: Asia/Jerusalem
-          MAX_USERNAME: ${{ secrets.MAX_USERNAME }}
-          MAX_PASSWORD: ${{ secrets.MAX_PASSWORD }}
-          CAL_USERNAME: ${{ secrets.CAL_USERNAME }}
-          CAL_PASSWORD: ${{ secrets.CAL_PASSWORD }}
-          ISRACARD_ID: ${{ secrets.ISRACARD_ID }}
-          ISRACARD_CARD6: ${{ secrets.ISRACARD_CARD6 }}
-          ISRACARD_PASSWORD: ${{ secrets.ISRACARD_PASSWORD }}
-          AMEX_ID: ${{ secrets.AMEX_ID }}
-          AMEX_CARD6: ${{ secrets.AMEX_CARD6 }}
-          AMEX_PASSWORD: ${{ secrets.AMEX_PASSWORD }}
-          HAPOALIM_USERCODE: ${{ secrets.HAPOALIM_USERCODE }}
-          HAPOALIM_PASSWORD: ${{ secrets.HAPOALIM_PASSWORD }}
-          LEUMI_USERNAME: ${{ secrets.LEUMI_USERNAME }}
-          LEUMI_PASSWORD: ${{ secrets.LEUMI_PASSWORD }}
-          DISCOUNT_ID: ${{ secrets.DISCOUNT_ID }}
-          DISCOUNT_PASSWORD: ${{ secrets.DISCOUNT_PASSWORD }}
-          DISCOUNT_NUM: ${{ secrets.DISCOUNT_NUM }}
-          MIZRAHI_USERNAME: ${{ secrets.MIZRAHI_USERNAME }}
-          MIZRAHI_PASSWORD: ${{ secrets.MIZRAHI_PASSWORD }}
-          GMAIL_CLIENT_ID: ${{ secrets.GMAIL_CLIENT_ID }}
-          GMAIL_CLIENT_SECRET: ${{ secrets.GMAIL_CLIENT_SECRET }}
-          GMAIL_REFRESH_TOKEN: ${{ secrets.GMAIL_REFRESH_TOKEN }}
-          RELAY_URL: ${{ secrets.RELAY_URL }}
-          RELAY_TOKEN: ${{ secrets.RELAY_TOKEN }}
+          # כל ההגדרות הסודיות של המאגר, כדי שכל שם חדש (למשל ISRACARD2_ID) יעבוד בלי לשנות את הקובץ הזה
+          ALL_SECRETS: ${{ toJSON(secrets) }}

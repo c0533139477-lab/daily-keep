@@ -23,15 +23,25 @@ interface Settings {
   daysBack?: number;
 }
 
-const env = (name: string) => (process.env[name] ?? '').trim();
+// כל ההגדרות הסודיות מגיעות יחד מקובץ ההפעלה, כך שאפשר להוסיף שמות חדשים בלי לשנות אותו
+let allSecrets: Record<string, string> = {};
+try {
+  allSecrets = JSON.parse(process.env.ALL_SECRETS || '{}');
+} catch {
+  allSecrets = {};
+}
+const env = (name: string) => (process.env[name] || allSecrets[name] || '').trim();
 
 /** אילו חשבונות למשוך: לפי ההגדרות הסודיות שהמשתמש מילא */
 function accountsFromEnv() {
   const list: { company: CompanyTypes; credentials: Record<string, string> }[] = [];
+  // לכל חברה אפשר עד שלושה משתמשים: MAX_..., MAX2_..., MAX3_... (למשל כרטיסים של שני בני זוג)
   const add = (company: CompanyTypes, fields: Record<string, string>) => {
-    const credentials: Record<string, string> = {};
-    for (const [key, envName] of Object.entries(fields)) credentials[key] = env(envName);
-    if (Object.values(credentials).every(Boolean)) list.push({ company, credentials });
+    for (const n of ['', '2', '3']) {
+      const credentials: Record<string, string> = {};
+      for (const [key, envName] of Object.entries(fields)) credentials[key] = env(envName.replace(/^([A-Z]+)_/, `$1${n}_`));
+      if (Object.values(credentials).every(Boolean)) list.push({ company, credentials });
+    }
   };
   add(CompanyTypes.max, { username: 'MAX_USERNAME', password: 'MAX_PASSWORD' });
   add(CompanyTypes.visaCal, { username: 'CAL_USERNAME', password: 'CAL_PASSWORD' });

@@ -24,6 +24,9 @@
 - אמריקן אקספרס: AMEX_ID, AMEX_CARD6, AMEX_PASSWORD
 - בנק הפועלים (בשביל הוראות קבע): HAPOALIM_USERCODE, HAPOALIM_PASSWORD
 
+יש כרטיסים של שני אנשים באותה חברה? לאדם השני מוסיפים 2 אחרי שם החברה.
+למשל: ISRACARD2_ID, ISRACARD2_CARD6, ISRACARD2_PASSWORD
+
 ## שליחת המייל
 
 - מה-Gmail שלך: GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET, GMAIL_REFRESH_TOKEN
